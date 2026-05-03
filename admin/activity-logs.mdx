@@ -1,0 +1,82 @@
+---
+title: "Activity logs and audit trail"
+description: "Track every admin content change through the Shape Your Life ID activity log system — providing a full, append-only audit trail of all platform actions."
+---
+
+The Shape Your Life ID admin panel automatically records every content creation, update, and deletion action performed by administrators. The activity log appears on the Dashboard and provides a full audit trail of platform changes.
+
+<Note>
+  Activity logs are append-only — they are never modified after they are written, only added to. This ensures the audit trail remains a reliable record of what happened and when.
+</Note>
+
+## What is logged
+
+Every time an administrator creates, updates, or deletes a tracked entity, the system writes a new row to the `activity_logs` table. Each entry captures the following fields:
+
+| Field | Description |
+|---|---|
+| `user_id` | The UUID of the administrator who performed the action. |
+| `action` | A human-readable description of the action (see below). |
+| `entity_type` | The type of content affected, e.g., `Scholarship`, `Program`, `Team`. |
+| `entity_id` | The UUID of the affected record (nullable on some older entries). |
+| `entity_name` | The display name or title of the affected record at the time of the action. |
+| `created_at` | The timestamp when the log entry was written. |
+
+The `action` field uses consistent phrasing across the application:
+
+- `added a new` — a new Scholarship or Program record was created
+- `updated the` — a Scholarship or Program was edited (non-deadline fields)
+- `updated the deadline for` — a scholarship or program's `time_start`/`time_end` was specifically changed
+- `added a new team member` — a team member was added
+- `updated level: X → Y for` / `updated position: X → Y for` — a team member's level or position changed (the actual values are embedded in the action string)
+- `updated the team member` — a team member was edited without a position or level change
+- `deleted a` — a Scholarship or Program was soft-deleted
+- `deleted a team member` — a team member was removed
+
+<Info>
+  Activity logging covers actions on the following entity types: **Scholarships**, **Programs**, **Teams**, and **User management** actions. The `entity_type` field in each log entry identifies which content area was affected.
+</Info>
+
+## Viewing recent activity
+
+The last 10 activity log entries are displayed on the Dashboard under the **Recent Activity** section. Each entry shows:
+
+- **Who** performed the action (the administrator's name, resolved via the `user` relationship)
+- **What** was done (the `action` and `entity_name` combined into a readable sentence)
+- **When** it happened (`created_at` timestamp)
+
+This gives you an at-a-glance view of recent platform changes without needing to query the database directly.
+
+## Activity log data model
+
+The `activity_logs` table is built from two migrations: the initial table creation and a follow-up migration that added the `entity_id` column. The final schema is:
+
+```sql
+CREATE TABLE activity_logs (
+    id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id     CHAR(36) NOT NULL,  -- UUID, foreign key to users.id
+    action      VARCHAR(255) NOT NULL,
+    entity_type VARCHAR(255) NULL,
+    entity_id   CHAR(36) NULL,      -- UUID, added in follow-up migration
+    entity_name VARCHAR(255) NOT NULL,
+    created_at  TIMESTAMP NULL,
+    updated_at  TIMESTAMP NULL,
+    CONSTRAINT fk_activity_logs_user
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+A typical log record looks like this:
+
+```json
+{
+  "id": 42,
+  "user_id": "018e1a2b-3c4d-7e5f-a6b7-c8d9e0f1a2b3",
+  "action": "added a new",
+  "entity_type": "Scholarship",
+  "entity_id": "018e9f8e-7d6c-7b5a-8493-a2b1c0d9e8f7",
+  "entity_name": "LPDP Scholarship 2025",
+  "created_at": "2026-05-03T15:42:11.000000Z",
+  "updated_at": "2026-05-03T15:42:11.000000Z"
+}
+```

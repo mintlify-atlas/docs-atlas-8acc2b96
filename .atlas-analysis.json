@@ -1,0 +1,89 @@
+{
+  "projectType": "saas",
+  "projectName": "Shape Your Life ID",
+  "projectDescription": "A Laravel-based community platform that connects Indonesian youth with scholarships, mentorships, bootcamps, events, and webinars to help shape their futures.",
+  "theme": "almond",
+  "primaryColor": "#fc2c24",
+  "lightColor": "#040404",
+  "darkColor": "#e29d78",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Getting Started",
+        "groups": [
+          {
+            "group": "Introduction",
+            "pages": ["introduction", "quickstart", "deployment"]
+          },
+          {
+            "group": "Platform Features",
+            "pages": [
+              "features/scholarships",
+              "features/programs",
+              "features/team-divisions",
+              "features/publications"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Admin Guide",
+        "groups": [
+          {
+            "group": "Dashboard & Access",
+            "pages": [
+              "admin/dashboard",
+              "admin/roles-permissions",
+              "admin/users"
+            ]
+          },
+          {
+            "group": "Content Management",
+            "pages": [
+              "admin/managing-scholarships",
+              "admin/managing-programs",
+              "admin/managing-teams",
+              "admin/managing-divisions"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "admin/master-data",
+              "admin/activity-logs"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Scholarship discovery with filtering by country, funding type, and degree level",
+    "Programs management covering events, webinars, mentorships, and bootcamps",
+    "Role-based access control with granular permissions via Spatie Laravel Permission",
+    "Team and division management for internal organization structure",
+    "Cockpit CMS integration for hero content and dynamic page data",
+    "Instagram publication management for social media content",
+    "Admin dashboard with real-time program and scholarship statistics",
+    "Activity logging for all admin CRUD operations",
+    "Indonesian location data (provinces, regencies, districts, villages) via API",
+    "User profile management with account settings"
+  ],
+  "publicApiSurface": [
+    "GET /api/location/regencies/{province}",
+    "GET /api/location/districts/{regency}",
+    "GET /api/location/villages/{district}",
+    "GET /api/user (auth:sanctum)",
+    "GET / — Home page with upcoming programs",
+    "GET /about — Organization and team info",
+    "GET /scholarship-and-fundings — Scholarship listing with filters",
+    "GET /scholarship/{slug} — Scholarship detail page",
+    "GET /program/{slug} — Program detail page",
+    "GET /event-and-webinar — Events and webinars listing",
+    "GET /mentorship-and-bootcamps — Mentorship and bootcamp listing",
+    "GET /publication — Instagram and publication highlights",
+    "GET /webinar/{slug} — Webinar detail page",
+    "GET /join-us — Community join page",
+    "GET /search — Global search"
+  ]
+}

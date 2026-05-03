@@ -1,0 +1,57 @@
+---
+title: "Manage divisions and membership"
+description: "Create working divisions in Shape Your Life ID, assign members with head, co-head, or member roles, and manage access with dedicated permissions."
+---
+
+Divisions in Shape Your Life ID represent the internal working groups or departments within the organization. Each division can have its own set of member assignments, and members can hold one of three roles within a division: head, co-head, or member. Two separate permissions control who can see divisions and who can manage their membership.
+
+<Note>
+  Two permissions govern this area: `division-list` grants access to the division listing, while `member-division` grants access to the member assignment section at `/admin/division/member`. Users scoped to a specific division only see members and actions for that division.
+</Note>
+
+## Creating a division
+
+<Steps>
+  <Step title="Navigate to Divisions → Create">
+    In the admin sidebar, go to **Divisions** and click **Create**. You need the `division-store` permission to create a new division.
+  </Step>
+  <Step title="Enter a name">
+    Enter a unique **Name** for the division. Division names must be unique across all divisions — submitting a duplicate name returns a validation error.
+  </Step>
+  <Step title="Add a description (optional)">
+    Enter an optional **Description** to explain the division's purpose or responsibilities.
+  </Step>
+  <Step title="Save">
+    Click **Save**. The division is created and immediately available for member assignments.
+  </Step>
+</Steps>
+
+## Managing division members
+
+Member assignments are managed at `/admin/division/member`. This section requires the `member-division` permission.
+
+Each member assignment record contains:
+
+| Field | Description |
+| --- | --- |
+| `name` | Full name of the member. |
+| `email` | Unique email address, used to create or link the member's user account. |
+| `phone_number` | Unique phone number (normalized to `+628...` format on save). |
+| `gender` | `L` (male) or `P` (female). |
+| `division_id` | The division this member belongs to. References the `divisions` table. |
+| `role` | One of `head`, `co-head`, or `member`. Each division can have at most one `head`. |
+
+When you create a member assignment, the system also provisions a user account using the supplied email and phone number. Assigning a second `head` role to a division that already has one is blocked by a validation rule.
+
+Admins who are themselves assigned to a specific division see only that division's members in the listing and create/edit forms — they cannot view or modify other divisions' members.
+
+## Division listing
+
+The division listing at `/admin/division` supports the full create, edit, and delete lifecycle:
+
+- **Create** — requires the `division-store` permission.
+- **Edit** — requires the `division-update` permission.
+- **Delete** — requires the `division-delete` permission. Deleting a division does not cascade to its member records; reassign or remove members before deleting.
+- **View** — clicking a division row shows its members inline via the `show` action.
+
+The listing is loaded via DataTables (AJAX), so it supports sorting and pagination without a page reload.

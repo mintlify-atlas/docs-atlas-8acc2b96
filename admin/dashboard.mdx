@@ -1,0 +1,81 @@
+---
+title: "Admin dashboard overview"
+description: "Understand the Shape Your Life ID admin dashboard, including statistics cards, the monthly activity chart, and the recent activity feed."
+---
+
+The Shape Your Life ID admin dashboard provides an at-a-glance view of all platform activity, including scholarship counts, program statistics, internal team size, and a monthly activity chart. You can reach it at `/admin/dashboard` after logging in with a verified account that holds the `dashboard` permission.
+
+## Statistics cards
+
+The top of the dashboard displays four summary cards covering all-time totals across the platform.
+
+<CardGroup cols={2}>
+  <Card title="Scholarship" icon="graduation-cap">
+    Total number of scholarship records published on the platform, counted across all categories and statuses.
+  </Card>
+  <Card title="Event & Webinar" icon="calendar">
+    Combined count of all programs categorised as **Event** or **Webinar**, reflecting the total number of those program types ever created.
+  </Card>
+  <Card title="Mentorship & Bootcamp" icon="users">
+    Combined count of all programs categorised as **Mentorship** or **Bootcamp**, giving a snapshot of capacity-building activity on the platform.
+  </Card>
+  <Card title="Internal Team" icon="person">
+    Number of currently active internal team members, sourced from the Teams module and updated in real time as members are activated or deactivated.
+  </Card>
+</CardGroup>
+
+## Monthly activity chart
+
+Below the statistics cards, a donut chart visualises how programs and scholarships are distributed across types for the **current calendar month**. The five segments are:
+
+| Segment | Colour | What it counts |
+|---|---|---|
+| Event | Coral red (`#f1948a`) | Programs with category **Event** whose dates overlap the current month |
+| Webinar | Deep purple (`#5b2c91`) | Programs with category **Webinar** whose dates overlap the current month |
+| Mentorship | Soft yellow (`#f9e79f`) | Programs with category **Mentorship** whose dates overlap the current month |
+| Bootcamp | Light blue (`#aed6f1`) | Programs with category **Bootcamp** whose dates overlap the current month |
+| Scholarship | Lavender (`#b170ca`) | Scholarships created during the current month |
+
+The chart title shows the current month and year (for example, **July 2025**). If no activity has been recorded for the month, all segments will be empty.
+
+## Recent activity feed
+
+The dashboard includes an activity log table that shows the **last 10 admin actions** taken across the panel. Each row contains:
+
+- **User** — the admin account that performed the action
+- **Action type** — the operation carried out (for example, created, updated, or deleted)
+- **Entity type** — the model or resource that was affected (for example, Scholarship, Program, Role)
+- **Entity name** — the specific record that was acted on
+- **Timestamp** — when the action occurred, displayed in human-readable form
+
+This feed is read-only. It is intended for auditing purposes so that administrators can quickly identify recent changes and who made them.
+
+## Admin navigation
+
+The sidebar menu is built from `config/menus.php` and is rendered conditionally based on each user's permissions. The table below lists every top-level group, the items it contains, and the permission required to see each item.
+
+| Group | Menu item | Required permission |
+|---|---|---|
+| Dashboard | Dashboard | `dashboard` |
+| Scholarship | Scholarships | `scholarships` |
+| Scholarship | Categories | `scholarship-categories` |
+| Program | Programs | `programs` |
+| Program | Categories | `program-categories` |
+| Master Data | Countries | `countries` |
+| Master Data | Degree Level | `degree-levels` |
+| Master Data | Funding Type | `funding-types` |
+| Divisions | Divisions (view) | `division-list` |
+| Divisions | Divisions (create) | `division-store` |
+| Divisions | Divisions (edit) | `division-update` |
+| Divisions | Divisions (delete) | `division-delete` |
+| Divisions | Members | `member-division` |
+| Teams | Teams | `teams` |
+| Teams | Positions | `positions` |
+| Teams | Levels | `levels` |
+| User Access | Roles | `roles` |
+| User Access | Permissions | `permissions` |
+| User Access | Users | `user-admins` |
+
+<Note>
+  Each menu item is only rendered if the authenticated user holds the corresponding permission. Users who lack a permission will not see the menu item at all — the section is hidden server-side, not just visually disabled.
+</Note>

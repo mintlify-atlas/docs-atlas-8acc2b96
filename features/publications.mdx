@@ -1,0 +1,29 @@
+---
+title: "Publications and social content on SYL"
+description: "Learn how Shape Your Life ID surfaces scholarship highlights, IG Live recaps, and curated Instagram posts on the Publications page at /publication."
+---
+
+Shape Your Life ID uses its Publications page to surface scholarship highlights, IG Live recaps, and curated Instagram posts from the community. The page at `/publication` brings together editorial content and social media in a single view, giving visitors a snapshot of SYL's latest activity and scholarship news.
+
+## Publication highlights
+
+The top section of the page displays a set of editorial highlights in a **big + small** layout:
+
+- **One large highlight** — a featured article or recap displayed prominently, typically a recent scholarship highlight post.
+- **Two smaller highlights** — secondary items displayed alongside the large card, each with its own title, publication type label (e.g. "Scholarship Highlights", "SYL Highlights"), date, and cover image.
+
+Each highlight has a `title`, `date`, `publish` label, and `image` path. The `isBig` flag distinguishes the featured card from the two supporting cards in the template.
+
+## Instagram feed
+
+Below the highlights, the page renders a grid of Instagram post images pulled from the `ig_posts` collection. Each post entry contains a `src` path and an `alt` text description.
+
+The grid currently displays **10 posts** in a photo-grid layout, giving visitors a visual overview of SYL's recent Instagram activity.
+
+## Instagram management
+
+Administrators can publish and manage Instagram posts through the admin panel at `/admin/instagram`. Adding a post through the admin interface makes it available for inclusion on the Publications page.
+
+<Note>
+  Publication highlight content (the big and small cards) is currently managed through static configuration in `PublicationController`. Instagram posts are managed dynamically through the admin panel. Both sources combine to form the final Publications page.
+</Note>

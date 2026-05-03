@@ -1,0 +1,122 @@
+---
+title: "Roles and permissions management"
+description: "Set up role-based access control for Shape Your Life ID administrators using Spatie Laravel Permission to assign roles and permissions."
+---
+
+Shape Your Life ID uses [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission) to manage role-based access control. Each admin user is assigned one or more roles, and each role holds a set of permissions that control which sections of the admin panel they can access. Roles and permissions are stored in the database using UUID primary keys and are cached for performance.
+
+## Understanding roles
+
+A role is a named group that bundles one or more permissions together. You assign a role to a user rather than assigning individual permissions directly to them. This makes it easy to manage access at scale — update a role once and every user with that role immediately inherits the change.
+
+Roles are managed at `/admin/role`. From this page you can:
+
+- **List** all existing roles in a DataTable view
+- **Create** a new role by providing a unique name
+- **Edit** an existing role's name
+- **Delete** a role (users who held the role will lose its permissions)
+- **Assign permissions** to a role via the role detail page
+
+Access to the Roles page requires the `roles` permission.
+
+## Understanding permissions
+
+Permissions are the individual access gates that control which parts of the admin panel a user can reach. The table below lists every permission name used in the system and the admin section it unlocks.
+
+<AccordionGroup>
+  <Accordion title="dashboard">
+    Grants access to the admin dashboard at `/admin/dashboard`. This is the landing page after login.
+  </Accordion>
+  <Accordion title="scholarships">
+    Grants access to the Scholarships list and CRUD pages under the **Scholarship** menu group.
+  </Accordion>
+  <Accordion title="scholarship-categories">
+    Grants access to the Scholarship Categories pages under the **Scholarship** menu group.
+  </Accordion>
+  <Accordion title="programs">
+    Grants access to the Programs list and CRUD pages under the **Program** menu group.
+  </Accordion>
+  <Accordion title="program-categories">
+    Grants access to the Program Categories pages under the **Program** menu group.
+  </Accordion>
+  <Accordion title="countries">
+    Grants access to the Countries master data page under the **Master Data** menu group.
+  </Accordion>
+  <Accordion title="degree-levels">
+    Grants access to the Degree Level master data page under the **Master Data** menu group.
+  </Accordion>
+  <Accordion title="funding-types">
+    Grants access to the Funding Type master data page under the **Master Data** menu group.
+  </Accordion>
+  <Accordion title="division-list">
+    Grants access to the Divisions index page under the **Divisions** menu group.
+  </Accordion>
+  <Accordion title="division-store">
+    Grants permission to create new divisions. Required to access the Create Division form.
+  </Accordion>
+  <Accordion title="division-update">
+    Grants permission to edit existing divisions. Required to access the Edit Division form.
+  </Accordion>
+  <Accordion title="division-delete">
+    Grants permission to delete divisions from the listing.
+  </Accordion>
+  <Accordion title="member-division">
+    Grants access to the Division Members pages under the **Divisions** menu group.
+  </Accordion>
+  <Accordion title="teams">
+    Grants access to the Teams list and CRUD pages under the **Teams** menu group.
+  </Accordion>
+  <Accordion title="positions">
+    Grants access to the Positions pages under the **Teams** menu group.
+  </Accordion>
+  <Accordion title="levels">
+    Grants access to the Levels pages under the **Teams** menu group.
+  </Accordion>
+  <Accordion title="roles">
+    Grants access to the Roles management page at `/admin/role` under the **User Access** menu group.
+  </Accordion>
+  <Accordion title="permissions">
+    Grants access to the Permissions management page at `/admin/permission` under the **User Access** menu group.
+  </Accordion>
+  <Accordion title="user-admins">
+    Grants access to the Users management page at `/admin/user` under the **User Access** menu group.
+  </Accordion>
+</AccordionGroup>
+
+## Assigning permissions to a role
+
+<Steps>
+  <Step title="Open the Roles page">
+    Navigate to **User Access → Roles** in the sidebar. You must have the `roles` permission to access this page.
+  </Step>
+  <Step title="Open the role detail">
+    Click the role you want to configure. The detail page lists all available permissions in the system.
+  </Step>
+  <Step title="Select permissions">
+    Check the permissions you want to grant to the role. Uncheck any permissions you want to revoke.
+  </Step>
+  <Step title="Save">
+    Click **Assign Permission**. The changes take effect immediately and are reflected for all users who hold that role.
+  </Step>
+</Steps>
+
+<Warning>
+  Removing a permission from a role immediately restricts access for every user assigned to that role. Those users will no longer see the corresponding menu item and will receive an authorisation error if they try to access the URL directly.
+</Warning>
+
+## Assigning roles to users
+
+<Steps>
+  <Step title="Open the Users page">
+    Navigate to **User Access → Users** in the sidebar. You must have the `user-admins` permission.
+  </Step>
+  <Step title="Edit the user">
+    Click **Edit** on the user you want to update.
+  </Step>
+  <Step title="Select a role">
+    In the edit form, choose the desired role from the **Role** dropdown. Only non-member roles (that is, roles other than `head`, `co-head`, and `member`) are available here.
+  </Step>
+  <Step title="Save">
+    Submit the form. The user's permissions are updated immediately based on the new role assignment.
+  </Step>
+</Steps>

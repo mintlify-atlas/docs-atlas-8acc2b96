@@ -1,0 +1,70 @@
+---
+title: "Manage team members and org structure"
+description: "Add team members to the Shape Your Life ID roster, define positions and levels, and manage batch cohorts that appear on the public About page."
+---
+
+The Teams section in the Shape Your Life ID admin panel manages the organization's internal roster. Team members appear on the public About page when marked as active. Each member is associated with a position, a level, and a batch — together these fields describe where someone sits in the org structure and which cohort they belong to.
+
+<Note>
+  Only active team members are shown on the public About page. Members where `is_active` is `false` are stored in the system but not displayed publicly.
+</Note>
+
+## Team member fields
+
+Each team member record contains the following fields:
+
+| Field | Description |
+| --- | --- |
+| `name` | Full name of the team member. Must be unique across all team records. |
+| `position_id` | The member's position (e.g., President, Secretary). References the `positions` table. |
+| `level_id` | The member's organizational level (e.g., Executive, Staff). References the `levels` table. |
+| `batch_start` | The start year or identifier of the member's cohort/generation. Required. |
+| `batch_end` | The end year of the member's batch period. Optional — leave blank for current members. |
+| `image` | A profile photo uploaded via the Dropify uploader, stored as a URL. |
+| `user_id` | Optional link to a registered user account in the system. |
+
+## Positions
+
+Positions describe a member's role title within the organization — for example, President, Vice President, or Secretary. You manage positions at `/admin/team/position`.
+
+The `positions` permission is required to access that section. Each position name must be unique. Deleting a position cascades to any team members assigned to it, so reassign members before deleting a position.
+
+## Levels
+
+Levels describe a member's organizational tier — for example, Executive, Coordinator, or Staff. You manage levels at `/admin/team/level`.
+
+The `levels` permission is required to access the levels section. Like positions, each level name must be unique, and deletions cascade to associated team members.
+
+## Adding a team member
+
+<Steps>
+  <Step title="Navigate to Teams → Create">
+    In the admin sidebar, go to **Teams** and click **Create**. You need the `teams` permission to access this section.
+  </Step>
+  <Step title="Enter the member's name">
+    Enter the member's full **Name**. Names must be unique across all team records.
+  </Step>
+  <Step title="Select position and level">
+    Choose the member's **Position** (e.g., President) and **Level** (e.g., Executive) from the dropdowns. Both are required.
+  </Step>
+  <Step title="Enter the batch">
+    Fill in **Batch start** (required) and optionally **Batch end** to identify the cohort this member belongs to.
+  </Step>
+  <Step title="Upload a photo">
+    Upload the member's profile **Image** using the Dropify uploader.
+  </Step>
+  <Step title="Link a user account (optional)">
+    If this team member has a registered account in the system, select their user from the **User** field. This association is optional.
+  </Step>
+  <Step title="Save">
+    Click **Save**. The member is saved to the roster and, if marked as active, will appear on the public About page.
+  </Step>
+</Steps>
+
+## Batch management
+
+The `batch_start` and `batch_end` columns represent the **cohort or generation** a team member belongs to — for example, batch 2023–2024. This is distinct from the member's position or level and is typically used to group members by period of service.
+
+Use `batch_end` to mark members who have completed their term. Leaving `batch_end` blank indicates a currently serving member. The batch values are stored as strings, so you can use year numbers, roman numerals, or any other convention your organization uses.
+
+When the activity log records a team member update, it explicitly notes changes to `level` and `position` — making it easy to track org-structure changes over time.

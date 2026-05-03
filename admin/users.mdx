@@ -1,0 +1,68 @@
+---
+title: "Managing admin users"
+description: "Create, edit, and manage Shape Your Life ID admin user accounts — assign roles, configure profiles, set location details, and handle account settings."
+---
+
+Admin users in Shape Your Life ID are managed through the Users section at `/admin/user`. Each user account has a profile with personal details, and can be assigned roles to control their level of access. All admin routes require authentication and a verified email address before they can be reached.
+
+<Note>
+  You need the `user-admins` permission to access the Users page and manage other admin accounts. Without it, the **User Access → Users** menu item will not be visible.
+</Note>
+
+## Creating a user
+
+<Steps>
+  <Step title="Open the Users page">
+    Navigate to **User Access → Users** in the admin sidebar and click **Create**.
+  </Step>
+  <Step title="Fill in the required fields">
+    The create form requires the following fields:
+
+    | Field | Validation |
+    |---|---|
+    | **Name** | Required string |
+    | **Email** | Required, unique, must be lowercase |
+    | **Phone number** | Required, unique across all profiles; leading `08` is automatically normalised to `+628` |
+    | **Gender** | Required; accepted values are `L` (male) or `P` (female) |
+    | **Role** | Required; must be an existing role name, excluding `head`, `co-head`, and `member` |
+  </Step>
+  <Step title="Submit">
+    Click **Save**. The system creates the user account, generates a profile record, and sends a verification email to the provided address.
+  </Step>
+</Steps>
+
+A password is automatically set on creation. The user must verify their email before they can access the admin panel.
+
+## User profile
+
+Every user account has an associated profile that stores personal and contact details. You can view and edit a profile from the account profile page at `/admin/profile`.
+
+The profile includes the following fields:
+
+| Field | Description |
+|---|---|
+| **Gender** | `L` (male) or `P` (female) |
+| **Phone number** | Stored in E.164 format (e.g. `+6281234567890`) |
+| **Birth date** | Optional date field |
+| **Profile image** | Optional file upload |
+| **Address** | Free-text address string |
+| **Location** | Village reference resolved through a four-level location hierarchy (province → regency → district → village) |
+
+<Tip>
+  The location dropdowns are powered by the `/api/location/` API endpoints. Select a **Province** first, then the **Regency** dropdown is populated automatically. Once you pick a regency, **District** options load, and finally the **Village** dropdown is populated. You must work through all four levels in order to save a valid village reference.
+</Tip>
+
+## Account settings
+
+Each logged-in user can manage their own account at `/admin/profile/setting`. From this page you can:
+
+- **Update profile information** — name, email, and all profile fields described above. If you change your email address, your account will require re-verification before you can continue using the admin panel.
+- **Delete account** — permanently removes the account. You must confirm your current password to proceed. After deletion you are logged out and redirected to the home page.
+
+Account deletion is irreversible. The associated profile record is removed via a cascading foreign-key constraint.
+
+## Email verification
+
+After a new user is created or after a user changes their email address, a verification email is sent via the `RegisterUserNotification` notification. The user must click the verification link in that email before they can access any admin route.
+
+All admin routes sit behind the `verified` middleware, which means an unverified user will be redirected to the email verification notice page even if they have a valid session. Resend the verification email from the notice page if the original email was not received.

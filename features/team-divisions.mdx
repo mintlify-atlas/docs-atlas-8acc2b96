@@ -1,0 +1,40 @@
+---
+title: "Team structure and divisions at SYL"
+description: "Understand how the Shape Your Life ID internal team roster and division system work, from the public About page to organisational working groups."
+---
+
+Shape Your Life ID has a structured internal organisation with a team roster visible on the public About page and a division system for managing working groups. The `TeamService` drives the public roster, while the `Division` and `MemberDivision` models manage the deeper organisational structure behind the scenes.
+
+## Team roster
+
+The About page at `/about` displays all **active** team members fetched via `TeamService::allActive()`. Each team member record in the `teams` table contains the following information:
+
+- **Name** — the member's display name (via the linked `User` record)
+- **Position** — their role within SYL (e.g. Head of Education, Content Creator)
+- **Level** — their seniority or membership level within the organisation
+- **Batch number** — which cohort the member joined SYL in
+- **Profile link** — an optional link to a personal profile or social page
+
+Members not marked as active are excluded from the public listing automatically.
+
+## Divisions
+
+Divisions group team members into specific working areas or departments within SYL. The three models that power this system work together:
+
+<CardGroup cols={2}>
+  <Card title="Team" icon="user">
+    Represents an individual member in the public roster. Linked to a `User`, a `Position`, and a `Level`.
+  </Card>
+  <Card title="Division" icon="building">
+    Represents an organisational unit or working group within SYL. Stored in the `divisions` table.
+  </Card>
+  <Card title="MemberDivision" icon="users">
+    The pivot record (`division_user`) that assigns a `User` to a `Division`. Supports filtering by division name and cascades user deletion on removal.
+  </Card>
+</CardGroup>
+
+Each `MemberDivision` record links a user to a division, allowing one person to belong to multiple divisions. You can filter the member list by division name using the `scopeFilter` scope on the `MemberDivision` model.
+
+## Join us
+
+If you want to get involved with Shape Your Life ID as a community member or volunteer, visit the `/join-us` page. This page explains the current opportunities to contribute to SYL and how to apply to become part of the team.

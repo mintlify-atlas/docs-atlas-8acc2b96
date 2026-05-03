@@ -1,0 +1,48 @@
+---
+title: "Master data: countries, degrees, and funding"
+description: "Manage the reference data that powers scholarship filtering and categorization, including countries, degree levels, and funding types."
+---
+
+Master data in Shape Your Life ID is the foundational reference information used across scholarship listings — including countries, degree levels, and funding types. Keeping this data accurate ensures the scholarship filtering system works correctly.
+
+<CardGroup cols={3}>
+  <Card title="Countries" icon="globe">
+    Manage scholarship countries at `/admin/country`. Requires the `countries` permission.
+  </Card>
+  <Card title="Degree levels" icon="graduation-cap">
+    Manage degree levels (e.g., S1, S2, S3) at `/admin/degree-level`. Requires the `degree-levels` permission.
+  </Card>
+  <Card title="Funding types" icon="coins">
+    Manage funding types (e.g., Fully Funded) at `/admin/funding-type`. Requires the `funding-types` permission.
+  </Card>
+</CardGroup>
+
+<Tip>
+  Add your countries and degree levels before creating your first scholarship. Scholarship records reference these values at creation time, so having them in place avoids extra editing later.
+</Tip>
+
+## Countries
+
+The countries list is managed at `/admin/country`. Each country entry has a single required field — **name** — which must be unique across the table. Scholarships reference a country to indicate where the scholarship is based or offered from, making it a key filter dimension on the public-facing listing.
+
+You can create, edit, and delete countries from the Countries index page. The name field is validated for uniqueness, so you cannot save two countries with the same spelling. Access to this section requires the `countries` permission.
+
+## Degree levels
+
+Degree levels are managed at `/admin/degree-level` and represent the academic qualification targeted by a scholarship (for example: S1 for undergraduate, S2 for master's, S3 for doctoral, or Diploma for diploma programs). These values appear as filter options when visitors browse scholarships.
+
+Each degree level has a unique **name** field. You can create, rename, and delete entries from the Degree Level index page. Access requires the `degree-levels` permission.
+
+## Funding types
+
+Funding types are managed at `/admin/funding-type` and describe the financial coverage a scholarship provides — for example, Fully Funded, Partially Funded, or Self-Funded. Visitors use these values to filter scholarships by financial support level.
+
+Each funding type has a unique **name** field. You can create, rename, and delete entries from the Funding Type index page. Access requires the `funding-types` permission.
+
+## Why master data matters
+
+Scholarships are created by selecting values from these reference tables. A scholarship record stores a reference (by ID) to its country, degree level, and funding type — it does not copy the name inline. This means that any change you make to a master data entry is immediately reflected on all scholarships that reference it.
+
+<Warning>
+  Deleting a master data record that is referenced by one or more active scholarships may cause display issues. The scholarship will lose its associated value and may appear incomplete or fail to appear in filtered results. Always check whether a record is in use before deleting it.
+</Warning>

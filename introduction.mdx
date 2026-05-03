@@ -1,0 +1,46 @@
+---
+title: "What is Shape Your Life ID"
+description: "Shape Your Life ID connects Indonesian youth with scholarships, mentorships, bootcamps, events, and webinars — all managed through a single platform."
+---
+
+Shape Your Life ID (SYL) is a community platform built for Indonesian youth. It brings together curated scholarship listings, structured learning programs, and an active team of volunteers — all under one platform. Whether you are a student searching for study-abroad funding or a community member running a mentorship initiative, SYL provides the tools to discover, manage, and share opportunities.
+
+## Platform features
+
+<CardGroup cols={2}>
+  <Card title="Scholarships" icon="graduation-cap" href="/features/scholarships">
+    Browse and filter scholarship listings by country, funding type, and degree level. Each listing includes eligibility details, deadlines, and rich content.
+  </Card>
+  <Card title="Programs" icon="calendar" href="/features/programs">
+    Discover upcoming and past events, webinars, mentorships, and bootcamps. Programs are categorized and searchable, with thumbnail previews and date information.
+  </Card>
+  <Card title="Team & divisions" icon="users" href="/features/team-divisions">
+    Explore the internal SYL team structure. Members are organized into divisions with assigned positions and levels, and the public-facing team page displays active members.
+  </Card>
+  <Card title="Publications" icon="newspaper" href="/features/publications">
+    SYL curates scholarship highlights and community updates for its audience. Publications are managed through Instagram post entries and surfaced via the public publication page.
+  </Card>
+</CardGroup>
+
+## Tech stack
+
+The platform is built on a modern PHP stack with a component-driven frontend:
+
+| Layer | Technology |
+|---|---|
+| Backend framework | Laravel 10 |
+| PHP version | 8.1 or higher |
+| CSS framework | Tailwind CSS 3 |
+| Frontend interactivity | Alpine.js 3 |
+| Build tool | Vite 4 |
+| Asset pipeline | `laravel-vite-plugin` |
+
+The application uses Blade templates for server-rendered views, with Tailwind CSS compiled through PostCSS and Alpine.js handling lightweight frontend interactions. SASS is also available for legacy stylesheet compilation.
+
+## Key integrations
+
+**Cockpit CMS** — Dynamic content such as the homepage hero section is managed through a self-hosted Cockpit CMS instance. The application communicates with Cockpit via a custom `Cockpit` helper class (`app/Helpers/Cockpit.php`) using HTTP requests authenticated by an API key. You configure the connection through the `API_COCKPIT_URL` and `KEY_COCKPIT` environment variables.
+
+**Spatie Laravel Permission** — Role-based access control (RBAC) is handled by the `spatie/laravel-permission` package. The application ships with five built-in roles: `developer`, `super-admin`, `head`, `co-head`, and `member`. Each role has a defined set of permissions governing access to admin features such as scholarships, programs, divisions, teams, and user management.
+
+**Instagram publication management** — Administrators can create Instagram post entries through the admin panel. These entries form the content basis for the public `/publication` page, giving SYL a lightweight way to surface social content without a direct API integration.

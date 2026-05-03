@@ -1,0 +1,55 @@
+---
+title: "Events, webinars, mentorships, and bootcamps"
+description: "Explore the four program types on Shape Your Life ID — events, webinars, mentorships, and bootcamps — each with its own listing and detail page."
+---
+
+Shape Your Life ID organises four types of programs — **events**, **webinars**, **mentorships**, and **bootcamps** — all accessible from the navigation menu. Each program type has a dedicated listing page and individual detail pages, and upcoming programs surface on the home page so you can see what's coming next.
+
+<Tabs>
+  <Tab title="Events & webinars">
+    The combined listing page at `/event-and-webinar` shows upcoming events and webinars alongside past ones. The page is split into three sections:
+
+    - **Upcoming** — events or webinars whose `time_start` is in the future, paginated **2 at a time** and sorted by earliest start date. Covers both event and webinar categories.
+    - **Past events** — events whose `time_end` has already passed, paginated **6 at a time**, ordered by end date ascending.
+    - **Past webinars** — webinars that have ended, showing up to **3 items** (not paginated yet), ordered by end date ascending.
+
+    Each card includes the program title, a truncated description (up to 300 characters), a thumbnail image, and a formatted date range derived from `time_start` and `time_end`. Webinar cards also display a speaker image.
+
+    Individual webinar detail pages are available at `/webinar/{slug}`. Note that the `/webinar` listing route is currently disabled; webinar content is discoverable through the `/event-and-webinar` combined page.
+  </Tab>
+  <Tab title="Mentorship & bootcamp">
+    The combined listing page at `/mentorship-and-bootcamps` contains three distinct sections:
+
+    - **Upcoming** — upcoming mentorships and bootcamps combined, showing **1 item at a time**, ordered by creation date descending.
+    - **Mentorships** — all mentorship programs paginated **6 per page**, ordered by creation date descending.
+    - **Bootcamps** — up to **3 bootcamp items** (not paginated), ordered by creation date descending.
+
+    All cards on this page display the date formatted from the program's `created_at` timestamp (since `time_start`/`time_end` may not always be set for these types). Each card includes the program title, thumbnail, and a truncated description (up to 300 characters).
+
+    The full detail page for any mentorship or bootcamp is at `/program/{slug}`.
+  </Tab>
+</Tabs>
+
+## Program detail pages
+
+Individual program detail pages are served from two routes depending on the type:
+
+| Route | Used for |
+|---|---|
+| `/program/{slug}` | Events, mentorships, and bootcamps |
+| `/webinar/{slug}` | Webinar-specific static detail views |
+
+On the detail page you can see the program's full content, category, thumbnail, and timing information. The `ProgramController` loads the program by slug and eagerly loads its category relationship before rendering the view.
+
+## Programs on the home page
+
+The home page surfaces programs based on their `time_start` value:
+
+- If `time_start` is **in the future**, the program appears in the **upcoming** section.
+- If `time_start` is **in the past** (or not set), the program appears in the **latest** section.
+
+This means you do not need to do anything special to promote a program — scheduling it with a future start time is enough.
+
+<Tip>
+  The global search page at `/search` lets you search across programs, scholarships, team members, and divisions by keyword. You can also filter results by type and apply secondary filters like program category or team position.
+</Tip>

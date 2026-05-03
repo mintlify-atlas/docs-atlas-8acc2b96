@@ -1,0 +1,139 @@
+---
+title: "Create and manage scholarship listings"
+description: "Publish, edit, and organize scholarship opportunities in the Shape Your Life ID admin panel so they appear on the public listing page."
+---
+
+The Scholarships section of the Shape Your Life ID admin panel is where you create and maintain scholarship listings that appear on the public `/scholarship-and-fundings` page. Each listing combines structured metadata — country, funding type, degree levels — with a rich-text body so visitors have everything they need to apply.
+
+<Note>
+  You must have the `scholarships` permission assigned to your role to access the Scholarships section of the admin panel.
+</Note>
+
+## Creating a scholarship
+
+<Steps>
+  <Step title="Navigate to Scholarships → Create">
+    In the admin sidebar, go to **Scholarships** and click **Create**.
+  </Step>
+  <Step title="Enter a title and subtitle">
+    Enter a **Title** (4–200 characters) and a **Subtitle** (4–400 characters). Both fields are required and are displayed prominently on the public listing card.
+  </Step>
+  <Step title="Select country and funding type">
+    Choose the scholarship's **Country** from the dropdown. Then select a **Funding type** (e.g., fully-funded, partial, self-funded).
+  </Step>
+  <Step title="Select a category">
+    Pick the **Category** that best describes this scholarship. Categories are managed separately — see [Scholarship categories](#scholarship-categories) below.
+  </Step>
+  <Step title="Choose degree levels">
+    Select one or more **Degree levels** (e.g., Bachelor, Master, PhD) and set a human-readable **Degree label** that will be shown on the public page.
+  </Step>
+  <Step title="Set the application period">
+    Fill in **Time start** and **Time end** to define the scholarship's open application window. The admin panel logs a separate activity entry when these dates are changed after initial creation.
+  </Step>
+  <Step title="Set the researcher">
+    Enter the **Researcher** name. Toggle **Custom researcher** if you want to enter a free-text researcher name instead of selecting one from the system.
+  </Step>
+  <Step title="Upload a thumbnail">
+    Upload a **Thumbnail** image. This image appears on the listing card on the public page.
+  </Step>
+  <Step title="Write the content">
+    Use the rich-text editor to write the full scholarship description. The `content` field must not be empty or contain only whitespace HTML.
+  </Step>
+  <Step title="Set the highlight flag">
+    Toggle **Highlight** to `Yes` if you want this scholarship to appear in the featured section at the top of the public listing. Only the top four highlighted scholarships are shown.
+  </Step>
+  <Step title="Save">
+    Click **Save**. The scholarship is published immediately and appears on the public `/scholarship-and-fundings` page.
+  </Step>
+</Steps>
+
+## Field reference
+
+<AccordionGroup>
+  <Accordion title="title">
+    **Type:** string — **Required**
+
+    The scholarship's display name. Minimum 4 characters, maximum 200 characters. Shown as the heading on the listing card and detail page.
+  </Accordion>
+  <Accordion title="subtitle">
+    **Type:** string — **Required**
+
+    A short summary shown below the title on the listing card. Minimum 4 characters, maximum 400 characters.
+  </Accordion>
+  <Accordion title="country">
+    **Column:** `country_id` — **Required**
+
+    References the `countries` table. Determines the country flag and label shown on the public card.
+  </Accordion>
+  <Accordion title="researcher / custom_researcher">
+    **Type:** string / boolean — **Required**
+
+    `researcher` holds the name of the person or organization offering the scholarship. When `custom_researcher` is `true`, the value is a free-text string entered by the admin rather than a system user.
+  </Accordion>
+  <Accordion title="funding_type">
+    **Column:** `funding_type_id` — **Required**
+
+    References the `funding_types` table. Examples: fully-funded, partial, self-funded.
+  </Accordion>
+  <Accordion title="category">
+    **Column:** `category_id` — **Required**
+
+    References the `scholarship_categories` table. Used to group scholarships on the public listing filter.
+  </Accordion>
+  <Accordion title="period (time_start / time_end)">
+    **Type:** timestamp — **Required**
+
+    Defines the open application window. The `period` input parses into separate `time_start` and `time_end` timestamp columns in the database. A deadline change is recorded as a distinct activity log entry.
+  </Accordion>
+  <Accordion title="degree_label">
+    **Type:** string — **Required**
+
+    A human-readable string displayed on the public card (e.g., "S1/S2/S3"). Separate from the `degree_levels` relationship which drives filtering.
+  </Accordion>
+  <Accordion title="degree_levels">
+    **Column:** pivot table `scholarship_degree_level` — **Required**
+
+    Many-to-many relationship with the `degree_levels` table. Select one or more degree levels; the selection is stored in the `scholarship_degree_level` pivot table.
+  </Accordion>
+  <Accordion title="highlight">
+    **Type:** boolean — **Required**
+
+    When `true`, the scholarship is eligible to appear in the featured/highlighted section at the top of the public listing page. See [Highlighted scholarships](#highlighted-scholarships).
+  </Accordion>
+  <Accordion title="thumbnail">
+    **Type:** string (file path) — **Required**
+
+    The cover image shown on the public listing card and detail page header.
+  </Accordion>
+  <Accordion title="content">
+    **Type:** text — **Required**
+
+    The full rich-text body of the scholarship listing. Validated against the `NonEmptyHtml` rule — plain whitespace or empty tags are rejected.
+  </Accordion>
+</AccordionGroup>
+
+## Scholarship categories
+
+Categories let you group scholarships so visitors can filter the public listing. You manage them separately at `/admin/scholarship/category`.
+
+Each category has a unique **name**. The `scholarship-categories` permission is required to access that section. Creating, editing, or deleting a category does not affect existing scholarships — the `category_id` foreign key is set to `NULL` on delete rather than cascading.
+
+## Highlighted scholarships
+
+Marking a scholarship as **highlighted** makes it eligible to appear in the featured strip at the top of the public `/scholarship-and-fundings` page. Only the top four highlighted scholarships are displayed in that section, ordered by creation date (newest first).
+
+To feature a scholarship:
+
+1. Open the scholarship for editing.
+2. Set **Highlight** to `Yes`.
+3. Save.
+
+To remove a scholarship from the featured strip, set **Highlight** back to `No`.
+
+## Deleting a scholarship
+
+Clicking **Delete** on a scholarship triggers a soft-delete. The row is marked with a `deleted_at` timestamp and is immediately hidden from the public listing, but the record is preserved in the database and can be restored if needed.
+
+<Warning>
+  The `content` field is validated with a `NonEmptyHtml` rule. Submitting a body that contains only empty HTML tags (e.g., `<p></p>`) or whitespace will fail validation. Make sure the editor contains real content before saving.
+</Warning>

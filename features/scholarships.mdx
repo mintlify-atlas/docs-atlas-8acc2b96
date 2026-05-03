@@ -1,0 +1,51 @@
+---
+title: "Scholarship discovery on Shape Your Life ID"
+description: "Browse, filter, and explore study-abroad and local scholarship opportunities by country, funding type, degree level, and category."
+---
+
+The Scholarships & Fundings section of Shape Your Life ID helps you discover both study-abroad and local scholarship opportunities in one place. You can narrow down results using filters for country, funding type, degree level, and category, then read through each scholarship's full details — from eligibility period to researcher information — directly on the platform.
+
+## Browsing scholarships
+
+The main listing page is available at `/scholarship-and-fundings`. At the top of the page, up to four **highlighted** scholarships are displayed as featured cards, giving you quick access to the most prominent opportunities. Below the highlights, all scholarships are listed in a paginated grid showing **6 items per page**.
+
+A filter sidebar lets you narrow results across four dimensions:
+
+<CardGroup cols={2}>
+  <Card title="Country" icon="globe">
+    Filter scholarships by destination or host country.
+  </Card>
+  <Card title="Funding type" icon="money-bill">
+    Filter by how the scholarship is funded — for example, fully funded or partial.
+  </Card>
+  <Card title="Degree level" icon="graduation-cap">
+    Narrow results to a specific academic level such as Bachelor's, Master's, or PhD.
+  </Card>
+  <Card title="Category" icon="tag">
+    Browse by scholarship category, such as funded, partial, or self-funded exchanges.
+  </Card>
+</CardGroup>
+
+<Note>
+  Highlighted scholarships always appear at the top of the listing page, regardless of the active filters.
+</Note>
+
+## Scholarship detail page
+
+Each scholarship has its own detail page accessible at `/scholarship/{slug}`. The page surfaces all the information you need to evaluate an opportunity:
+
+- **Title and subtitle** — the scholarship name and a supporting tagline
+- **Country** — the destination or sponsoring country
+- **Funding type** — e.g. fully funded, partial grant
+- **Degree level** — the academic levels this scholarship covers (a scholarship can cover multiple levels)
+- **Researcher** — the person or organisation associated with the scholarship
+- **Application period** — `time_start` and `time_end` displayed as a formatted date range
+- **Content** — the full description, requirements, and instructions
+
+If you navigate to a legacy URL that uses a numeric ID (`/scholarship/{id}`), the platform automatically redirects you to the canonical slug-based URL.
+
+## Scholarship categories and degree levels
+
+Scholarships are organised into **categories** (stored in `scholarship_categories`) that describe the funding arrangement — for example, fully funded, partial, or self-funded. Each category groups related scholarships so you can browse within a specific funding model.
+
+**Degree levels** are managed separately and linked through a many-to-many relationship, meaning a single scholarship can be tagged with multiple levels (e.g. both Master's and PhD). Degree levels are also available as a filter on the listing page via the `degree_label` field.

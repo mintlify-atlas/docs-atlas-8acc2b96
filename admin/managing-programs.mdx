@@ -1,0 +1,109 @@
+---
+title: "Create and manage programs on SYL"
+description: "Publish and manage events, webinars, mentorships, and bootcamps in the Shape Your Life ID admin panel for display on public-facing pages."
+---
+
+The Programs section lets you create and manage all types of structured activities — including events, webinars, mentorships, and bootcamps — which appear on the public-facing program pages and the home page. Each program belongs to a category that determines which public page it appears on.
+
+<Note>
+  You must have the `programs` permission assigned to your role to access the Programs section of the admin panel.
+</Note>
+
+## Program categories
+
+Programs are organized by four built-in category types. Each category maps to its own public page:
+
+| Category | Public page |
+| --- | --- |
+| Event | `/event-and-webinar` |
+| Webinar | `/event-and-webinar` |
+| Mentorship | `/mentorship-and-bootcamps` |
+| Bootcamp | `/mentorship-and-bootcamps` |
+
+<Tip>
+  Program categories are managed at `/admin/programs/category`. You need the `program-categories` permission to create or edit categories there.
+</Tip>
+
+## Creating a program
+
+<Steps>
+  <Step title="Navigate to Programs → Create">
+    In the admin sidebar, go to **Programs** and click **Create**.
+  </Step>
+  <Step title="Enter a title">
+    Enter a **Title** (4–200 characters). This is shown as the heading on the program card and detail page.
+  </Step>
+  <Step title="Select a category">
+    Choose the **Category** (event, webinar, mentorship, or bootcamp). The category determines which public page the program appears on.
+  </Step>
+  <Step title="Add speaker details">
+    Enter the **Speaker** name. Optionally upload a **Speaker image** — this is handled via the Dropify uploader and stored as a file path.
+  </Step>
+  <Step title="Set the program period">
+    Fill in **Time start** and **Time end** to define when the program runs. These values control whether the program appears as "Upcoming" or "Latest" on the home page.
+  </Step>
+  <Step title="Upload a thumbnail">
+    Upload a **Thumbnail** image. This image appears on the program card in listing pages.
+  </Step>
+  <Step title="Write the content">
+    Use the rich-text editor to write the full program description. The `content` field must not be empty or contain only whitespace HTML.
+  </Step>
+  <Step title="Save">
+    Click **Save**. The program is published immediately and appears on the relevant public category page.
+  </Step>
+</Steps>
+
+## Field reference
+
+<AccordionGroup>
+  <Accordion title="title">
+    **Type:** string — **Required**
+
+    The program's display name. Minimum 4 characters, maximum 200 characters.
+  </Accordion>
+  <Accordion title="category_id">
+    **Type:** UUID — **Required**
+
+    References the `programs_categories` table. Determines the public page the program appears on (event, webinar, mentorship, or bootcamp).
+  </Accordion>
+  <Accordion title="speaker">
+    **Type:** string — **Required**
+
+    The name of the speaker or facilitator for the program. Displayed on the program detail page.
+  </Accordion>
+  <Accordion title="speaker_image">
+    **Type:** string (file path) — **Optional**
+
+    A photo of the speaker. Uploaded via the Dropify file uploader. The path is stored as `speaker_image`; supporting fields `speaker_image_base` and `speaker_image_unique_path` are used internally by the uploader.
+  </Accordion>
+  <Accordion title="period (time_start / time_end)">
+    **Type:** timestamp — **Required**
+
+    The `period` input is parsed into separate `time_start` and `time_end` timestamp columns. These values control the "Upcoming" vs. "Latest" classification on the home page and are used as display dates on the program card. A date change is recorded as a distinct activity log entry.
+  </Accordion>
+  <Accordion title="thumbnail">
+    **Type:** string (file path) — **Required**
+
+    The cover image shown on the program listing card and detail page header.
+  </Accordion>
+  <Accordion title="content">
+    **Type:** text — **Required**
+
+    The full rich-text body of the program. Validated against the `NonEmptyHtml` rule — empty tags or whitespace-only content are rejected.
+  </Accordion>
+</AccordionGroup>
+
+## Upcoming vs. latest programs
+
+The home page splits programs into two sections based on the `time_start` date:
+
+- **Upcoming** — programs whose `time_start` is in the future.
+- **Latest** — programs whose `time_start` is in the past.
+
+Both sections pull from the same `programs` table filtered by category. Keep `time_start` accurate so programs automatically move from "Upcoming" to "Latest" once they have passed.
+
+## Editing and deleting
+
+To edit a program, click its row in the listing and update the relevant fields. The activity log records whether the change affected the program dates or other metadata.
+
+Deleting a program performs a **soft-delete**: the row is marked with a `deleted_at` timestamp and hidden from all public pages, but the record remains in the database and can be restored if needed.

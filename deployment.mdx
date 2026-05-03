@@ -1,0 +1,160 @@
+---
+title: "Deploy Shape Your Life ID to production"
+description: "Configure your server environment, compile assets, run production optimizations, and set up a web server to serve Shape Your Life ID in production."
+---
+
+Deploying Shape Your Life ID to production involves hardening your environment configuration, running database migrations, compiling frontend assets, caching Laravel's configuration and routes, and pointing a web server at the application's `public/` directory. This guide walks through each of those steps.
+
+<Warning>
+  Never set `APP_DEBUG=true` in a production environment. When debug mode is enabled, detailed stack traces — including environment variables, file paths, and database queries — are exposed in error responses. This is a significant security risk on a public-facing server.
+</Warning>
+
+## Production deployment
+
+<Steps>
+  <Step title="Harden the environment configuration">
+    Open your `.env` file on the server and set the following values:
+
+    ```bash
+    APP_ENV=production
+    APP_DEBUG=false
+    APP_URL=https://yourdomain.com
+    ```
+
+    Make sure `APP_KEY` is set to a valid 32-character base64 key. If you have not already generated one, run:
+
+    ```bash
+    php artisan key:generate
+    ```
+  </Step>
+
+  <Step title="Configure database credentials">
+    Update the database connection settings in `.env` to match your production database:
+
+    ```bash
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=shapeyourlifeid
+    DB_USERNAME=your_db_user
+    DB_PASSWORD=your_db_password
+    ```
+  </Step>
+
+  <Step title="Run migrations">
+    Apply all pending database migrations. The `--force` flag is required to run migrations in a production environment:
+
+    ```bash
+    php artisan migrate --force
+    ```
+  </Step>
+
+  <Step title="Cache configuration, routes, and views">
+    Cache the compiled configuration, route definitions, and Blade views to improve request performance:
+
+    ```bash
+    php artisan config:cache && php artisan route:cache && php artisan view:cache
+    ```
+
+    To clear these caches later (for example, after changing `.env` values or routes):
+
+    ```bash
+    php artisan config:clear && php artisan route:clear && php artisan view:clear
+    ```
+  </Step>
+
+  <Step title="Compile frontend assets">
+    Build and fingerprint all CSS and JavaScript assets for production:
+
+    ```bash
+    npm run build
+    ```
+
+    The compiled output is written to `public/build/`. This directory is generated at build time and is not committed to version control.
+  </Step>
+
+  <Step title="Set file system permissions">
+    The web server process must be able to write to the `storage/` and `bootstrap/cache/` directories:
+
+    ```bash
+    chmod -R 775 storage bootstrap/cache
+    chown -R www-data:www-data storage bootstrap/cache
+    ```
+
+    Replace `www-data` with your web server's user if it differs.
+  </Step>
+
+  <Step title="Configure your web server">
+    Point your web server's document root at the `public/` directory. See the Nginx configuration below for a complete example.
+  </Step>
+</Steps>
+
+## Nginx configuration
+
+The following Nginx server block is the standard configuration for a Laravel application. Replace `yourdomain.com` and the `root` path with your actual values:
+
+```nginx
+server {
+    listen 80;
+    listen [::]:80;
+    server_name yourdomain.com www.yourdomain.com;
+
+    root /var/www/shapeyourlifeid/public;
+    index index.php;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+```
+
+After adding this file to `/etc/nginx/sites-available/`, enable it and reload Nginx:
+
+```bash
+ln -s /etc/nginx/sites-available/shapeyourlifeid /etc/nginx/sites-enabled/
+nginx -t && systemctl reload nginx
+```
+
+For HTTPS, use [Certbot](https://certbot.eff.org/) to obtain and auto-renew a Let's Encrypt certificate.
+
+## Required environment variables
+
+The table below lists every environment variable the application reads. Variables marked as required must be set before the application will function correctly.
+
+| Variable | Required | Description |
+|---|---|---|
+| `APP_KEY` | Yes | 32-character base64 encryption key. Generate with `php artisan key:generate`. |
+| `APP_ENV` | Yes | Set to `production` in production environments. |
+| `APP_DEBUG` | Yes | Must be `false` in production. |
+| `APP_URL` | Yes | The fully qualified URL of your application, e.g. `https://yourdomain.com`. |
+| `DB_CONNECTION` | Yes | Database driver. Use `mysql`. |
+| `DB_HOST` | Yes | Database server hostname or IP address. |
+| `DB_PORT` | Yes | Database port. Default is `3306` for MySQL. |
+| `DB_DATABASE` | Yes | Name of the database. |
+| `DB_USERNAME` | Yes | Database user with read/write access. |
+| `DB_PASSWORD` | Yes | Password for the database user. |
+| `API_COCKPIT_URL` | Yes | Base URL of your Cockpit CMS API, e.g. `https://cms.yourdomain.com/api/`. Required for dynamic homepage content. |
+| `KEY_COCKPIT` | Yes | API key for authenticating requests to Cockpit CMS. |
+| `MAIL_*` | No | Mail configuration for password reset and email verification. Refer to the [Laravel mail documentation](https://laravel.com/docs/10.x/mail). |
+| `SESSION_DRIVER` | No | Session storage driver. Defaults to `file`. Consider `redis` or `database` for multi-server deployments. |
+| `CACHE_DRIVER` | No | Cache driver. Defaults to `file`. Use `redis` for better performance in production. |
